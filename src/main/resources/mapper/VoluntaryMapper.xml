@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.project.dao.VoluntaryMapper">
+  <resultMap id="BaseResultMap" type="com.company.project.model.Voluntary">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="vid" jdbcType="INTEGER" property="vid" />
+    <result column="sid" jdbcType="INTEGER" property="sid" />
+    <result column="rid" jdbcType="INTEGER" property="rid" />
+    <result column="tid" jdbcType="INTEGER" property="tid" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="progress" jdbcType="INTEGER" property="progress" />
+    <result column="date" jdbcType="TIMESTAMP" property="date" />
+  </resultMap>
+</mapper>

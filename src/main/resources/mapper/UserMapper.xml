@@ -5,16 +5,10 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="userrole" jdbcType="INTEGER" property="userrole" />
+    <id column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="user_role" jdbcType="INTEGER" property="userRole" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="email" jdbcType="VARCHAR" property="email" />
-    <result column="qq" jdbcType="VARCHAR" property="qq" />
-    <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
-    <result column="sex" jdbcType="INTEGER" property="sex" />
     <result column="token" jdbcType="VARCHAR" property="token" />
   </resultMap>
 </mapper>

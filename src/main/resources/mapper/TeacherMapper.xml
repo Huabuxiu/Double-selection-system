@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.project.dao.TeacherMapper">
+  <resultMap id="BaseResultMap" type="com.company.project.model.Teacher">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="tid" jdbcType="INTEGER" property="tid" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="research_direction" jdbcType="VARCHAR" property="researchDirection" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="research_findings" jdbcType="LONGVARCHAR" property="researchFindings" />
+  </resultMap>
+</mapper>

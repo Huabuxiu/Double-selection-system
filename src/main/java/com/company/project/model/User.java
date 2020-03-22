@@ -4,55 +4,43 @@ import javax.persistence.*;
 
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer uid;
 
-    private Integer userrole;
+    @Column(name = "user_role")
+    private Integer userRole;
 
     private String username;
 
     private String password;
 
-    private String name;
-
-    private String email;
-
-    private String qq;
-
-    private String phone;
-
-    private String avatar;
-
-    private Integer sex;
-
     private String token;
 
     /**
-     * @return id
+     * @return uid
      */
-    public Integer getId() {
-        return id;
+    public Integer getUid() {
+        return uid;
     }
 
     /**
-     * @param id
+     * @param uid
      */
-    public void setId(Integer id) {
-        this.id = id;
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 
     /**
-     * @return userrole
+     * @return user_role
      */
-    public Integer getUserrole() {
-        return userrole;
+    public Integer getUserRole() {
+        return userRole;
     }
 
     /**
-     * @param userrole
+     * @param userRole
      */
-    public void setUserrole(Integer userrole) {
-        this.userrole = userrole;
+    public void setUserRole(Integer userRole) {
+        this.userRole = userRole;
     }
 
     /**
@@ -81,90 +69,6 @@ public class User {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * @return name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return email
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return qq
-     */
-    public String getQq() {
-        return qq;
-    }
-
-    /**
-     * @param qq
-     */
-    public void setQq(String qq) {
-        this.qq = qq;
-    }
-
-    /**
-     * @return phone
-     */
-    public String getPhone() {
-        return phone;
-    }
-
-    /**
-     * @param phone
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    /**
-     * @return avatar
-     */
-    public String getAvatar() {
-        return avatar;
-    }
-
-    /**
-     * @param avatar
-     */
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    /**
-     * @return sex
-     */
-    public Integer getSex() {
-        return sex;
-    }
-
-    /**
-     * @param sex
-     */
-    public void setSex(Integer sex) {
-        this.sex = sex;
     }
 
     /**

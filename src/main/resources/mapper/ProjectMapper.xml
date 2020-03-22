@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.project.dao.ProjectMapper">
+  <resultMap id="BaseResultMap" type="com.company.project.model.Project">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="pid" jdbcType="INTEGER" property="pid" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="time_start" jdbcType="TIMESTAMP" property="timeStart" />
+    <result column="time_end" jdbcType="TIMESTAMP" property="timeEnd" />
+    <result column="describe" jdbcType="VARCHAR" property="describe" />
+  </resultMap>
+</mapper>

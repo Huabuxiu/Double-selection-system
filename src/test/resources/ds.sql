@@ -1,20 +1,96 @@
 CREATE DATABASE ds;
 use ds;
+
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-                        `id` int(11) NOT NULL AUTO_INCREMENT,
-                        `userrole` int NOT NULL ,
+                        `uid` int(11) NOT NULL AUTO_INCREMENT,
+                        `user_role` int NOT NULL ,
                         `username` varchar(255) NOT NULL,
                         `password` varchar(255) NOT NULL,
-                        `name` varchar(255) NOT NULL,
-                        `email` varchar(255) NOT NULL,
-                        `qq` varchar(50) NOT NULL ,
-                        `phone` varchar(11) NOT NULL ,
-                        `avatar` varchar(255) NOT NULL ,
-                        `sex` int(1) DEFAULT NULL,
                         `token` varchar(255) NOT NULL ,
-                        PRIMARY KEY (`id`)
+                        PRIMARY KEY (`uid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `user` VALUES ('1', '1','1347638343@qq.com', '1ee04e0b1cb5af7367c80c22e42efd8b', '小马','1347638343@qq.com', '1347638343','13279532337', 'https://img2.woyaogexing.com/2020/01/16/429b82f4f75c4ac584a7d394efdc3326!400x400.jpeg','1','1ee04e0b1cb5af7367c80c22e42efd8b');
-INSERT INTO `user` VALUES ( '2','3','134763834@qq.com', '1ee04e0b1cb5af7367c80c22e42efd8b', '小李', '134763834@qq.com', '134763834','13279532337','https://img2.woyaogexing.com/2020/01/16/a1ca7c3d414d490d87bd4a2545ead0a4!400x400.jpeg','0','1ee04e0b1cb5af7367c80c22e42efd8b');
+
+DROP TABLE IF EXISTS `student`;
+CREATE TABLE `student` (
+                        `sid` int(11) NOT NULL AUTO_INCREMENT,
+                        `uid` int(11) NOT NULL ,
+                        `name` varchar(255) NOT NULL,
+                        `phone` varchar(255) NOT NULL,
+                        `e_mail` varchar(255) NOT NULL ,
+                        `qq` varchar(255) NOT NULL ,
+                        `image` varchar(255) NOT NULL ,
+                        `update_time` DATETIME NOT NULL ,
+                        PRIMARY KEY (`sid`),
+                        FOREIGN KEY (`uid`) REFERENCES user(`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+DROP TABLE IF EXISTS `results`;
+CREATE TABLE `results` (
+                           `sid` int(11) NOT NULL AUTO_INCREMENT,
+                           `rid` int(11) NOT NULL ,
+                           `math` int(3) NOT NULL,
+                           `english` int(3) NOT NULL,
+                           `politics` int(3) NOT NULL,
+                           `major` int(3) NOT NULL,
+                           `total_score` int(3) NOT NULL,
+                           `exam_type` varchar(255) NOT NULL,
+                           PRIMARY KEY (`rid`),
+                           FOREIGN KEY (`sid`) REFERENCES student(`sid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `education`;
+CREATE TABLE `education` (
+                           `sid` int(11) NOT NULL AUTO_INCREMENT,
+                           `eid` int(11) NOT NULL ,
+                           `school` varchar(255) NOT NULL,
+                           `major` varchar(255) NOT NULL,
+                           `time_start` DATETIME NOT NULL ,
+                           `time_end` DATETIME NOT NULL ,
+                           `sedu_dec` varchar(255) NOT NULL,
+                           PRIMARY KEY (`eid`),
+                           FOREIGN KEY (`sid`) REFERENCES student(`sid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `project`;
+CREATE TABLE `project` (
+                             `uid` int(11) NOT NULL AUTO_INCREMENT,
+                             `pid` int(11) NOT NULL ,
+                             `name` varchar(255) NOT NULL,
+                             `position` varchar(255) NOT NULL,
+                             `time_start` DATETIME NOT NULL ,
+                             `time_end` DATETIME NOT NULL ,
+                             `describe` varchar(255) NOT NULL,
+                             PRIMARY KEY (`pid`),
+                             FOREIGN KEY (`uid`) REFERENCES user(`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `teacher`;
+CREATE TABLE `teacher` (
+                           `uid` int(11) NOT NULL AUTO_INCREMENT,
+                           `tid` int(11) NOT NULL ,
+                           `name` varchar(255) NOT NULL,
+                           `title` varchar(255) NOT NULL,
+                           `research_direction` varchar(255) NOT NULL,
+                           `image` varchar(255) NOT NULL,
+                           `research_findings` longtext NOT NULL,
+                           PRIMARY KEY (`tid`),
+                           FOREIGN KEY (`uid`) REFERENCES user(`uid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `voluntary`;
+CREATE TABLE `voluntary` (
+                           `sid` int(11) NOT NULL AUTO_INCREMENT,
+                           `vid` int(11) NOT NULL ,
+                           `rid` int(11) NOT NULL ,
+                           `tid` int(11) NOT NULL ,
+                            `level` int NOT NULL ,
+                            `progress` int NOT NULL ,
+                            `date` datetime NOT NULL ,
+                           PRIMARY KEY (`vid`),
+                           FOREIGN KEY (`sid`) REFERENCES student(`sid`),
+                           FOREIGN KEY (`rid`) REFERENCES results(`rid`),
+                           FOREIGN KEY (`tid`) REFERENCES teacher(`tid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
