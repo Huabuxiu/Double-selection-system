@@ -19,7 +19,7 @@ public class Project {
     @Column(name = "time_end")
     private Date timeEnd;
 
-    private String describe;
+    private String describes;
 
     /**
      * @return pid
@@ -106,16 +106,16 @@ public class Project {
     }
 
     /**
-     * @return describe
+     * @return describes
      */
-    public String getDescribe() {
-        return describe;
+    public String getDescribes() {
+        return describes;
     }
 
     /**
-     * @param describe
+     * @param describes
      */
-    public void setDescribe(String describe) {
-        this.describe = describe;
+    public void setDescribes(String describes) {
+        this.describes = describes;
     }
 }

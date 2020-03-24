@@ -1,6 +1,7 @@
 package com.company.project.core;
 
 
+import com.company.project.configurer.Log;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.entity.Condition;
@@ -48,6 +49,7 @@ public abstract class AbstractService<T> implements Service<T> {
         return mapper.selectByPrimaryKey(id);
     }
 
+    @Log("logTest")
     @Override
     public T findBy(String fieldName, Object value) throws TooManyResultsException {
         try {

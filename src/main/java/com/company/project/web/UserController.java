@@ -1,4 +1,5 @@
 package com.company.project.web;
+import com.company.project.configurer.Log;
 import com.company.project.core.Result;
 import com.company.project.core.ResultGenerator;
 import com.company.project.model.Student;
@@ -54,6 +55,7 @@ public class UserController {
     }
 
 
+
     @PostMapping("/user_info")
     public Result user_info(@RequestBody Map<String,String> data) {
         log.info("user_info   "+"参数:"+data.get("token"));
@@ -61,19 +63,20 @@ public class UserController {
         if (user == null){
             return ResultGenerator.genFailResult("用户错误");
         }
-
         Map<String,Object> returnMap = new HashMap<>();
-        user.setPassword(" ");
-        returnMap.put("user",user);
+        returnMap.put("uid",user.getUid());
+        returnMap.put("userRole",user.getUserRole());
         switch (user.getUserRole()){
             case 1: {
                 Student student = studentService.findBy("uid", user.getUid());
-                returnMap.put("student",student);
+                returnMap.put("image",student.getImage());
+                returnMap.put("name",student.getName());
                 return ResultGenerator.genSuccessResult(returnMap);
             }
             case 2:{
                 Teacher teacher = teacherService.findBy("uid",user.getUid());
-                returnMap.put("teacher",teacher);
+                returnMap.put("image",teacher.getImage());
+                returnMap.put("name",teacher.getName());
                 return ResultGenerator.genSuccessResult(returnMap);
             }
             default:

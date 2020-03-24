@@ -26,9 +26,9 @@ public class FileController {
     private static final Logger log = LoggerFactory.getLogger(FileController.class);
 
     @RequestMapping(path = {"/fileUpload"})
-    public Result upload(@RequestParam("fileName") MultipartFile file, Map<String, Object> map) {
+    public Result upload(@RequestParam("file") MultipartFile file) {
 
-        log.info("fileUpload"+file.getOriginalFilename());
+        log.info("fileUpload :"+file.getOriginalFilename());
         if (FileUtils.upload(file,file.getOriginalFilename())){
             //上传成功
             return ResultGenerator.genSuccessResult("http://295uq99495.wicp.vip/image/"+file.getOriginalFilename());

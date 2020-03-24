@@ -11,6 +11,6 @@
     <result column="position" jdbcType="VARCHAR" property="position" />
     <result column="time_start" jdbcType="TIMESTAMP" property="timeStart" />
     <result column="time_end" jdbcType="TIMESTAMP" property="timeEnd" />
-    <result column="describe" jdbcType="VARCHAR" property="describe" />
+    <result column="describes" jdbcType="VARCHAR" property="describes" />
   </resultMap>
 </mapper>

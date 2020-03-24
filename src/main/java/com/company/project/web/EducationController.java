@@ -2,25 +2,27 @@ package com.company.project.web;
 import com.company.project.core.Result;
 import com.company.project.core.ResultGenerator;
 import com.company.project.model.Education;
+import com.company.project.model.Student;
 import com.company.project.service.EducationService;
+import com.company.project.service.StudentService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
 * Created by Huabuxiu on 2020/03/20.
 */
 @RestController
-@RequestMapping("/education")
 public class EducationController {
     @Resource
     private EducationService educationService;
+
+    @Resource
+    private StudentService studentService;
 
     @PostMapping("/add")
     public Result add(Education education) {
@@ -40,9 +42,10 @@ public class EducationController {
         return ResultGenerator.genSuccessResult();
     }
 
-    @PostMapping("/detail")
-    public Result detail(@RequestParam Integer id) {
-        Education education = educationService.findById(id);
+    @PostMapping("/education")
+    public Result education(@RequestBody Map<String,Integer> data) {
+        Student student =studentService.findBy("uid",data.get("uid"));
+        Education education = educationService.findBy("sid",student.getSid());
         return ResultGenerator.genSuccessResult(education);
     }
 
