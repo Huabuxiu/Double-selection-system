@@ -1,6 +1,9 @@
 package com.company.project.service;
 import com.company.project.model.Voluntary;
 import com.company.project.core.Service;
+import com.company.project.model.VoluntaryVo;
+
+import java.util.List;
 
 
 /**
@@ -8,4 +11,5 @@ import com.company.project.core.Service;
  */
 public interface VoluntaryService extends Service<Voluntary> {
 
+    List<VoluntaryVo> getVoList(List<Voluntary> list);
 }

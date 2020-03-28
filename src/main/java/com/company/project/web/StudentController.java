@@ -228,6 +228,7 @@ public class StudentController {
             elementmap.put("time_end",project.getTimeEnd());
             elementmap.put("position",project.getPosition());
             elementmap.put("describes",project.getDescribes());
+            elementmap.put("pid",project.getPid());
             returnList.add(elementmap);
         }
         return ResultGenerator.genSuccessResult(returnList);

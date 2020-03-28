@@ -17,6 +17,9 @@ public class Teacher {
 
     private String image;
 
+    @Column(name = "e_mail")
+    private String eMail;
+
     @Column(name = "research_findings")
     private String researchFindings;
 
@@ -102,6 +105,20 @@ public class Teacher {
      */
     public void setImage(String image) {
         this.image = image;
+    }
+
+    /**
+     * @return e_mail
+     */
+    public String geteMail() {
+        return eMail;
+    }
+
+    /**
+     * @param eMail
+     */
+    public void seteMail(String eMail) {
+        this.eMail = eMail;
     }
 
     /**

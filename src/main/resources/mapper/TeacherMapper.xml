@@ -11,6 +11,7 @@
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="research_direction" jdbcType="VARCHAR" property="researchDirection" />
     <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="e_mail" jdbcType="VARCHAR" property="eMail" />
     <result column="research_findings" jdbcType="LONGVARCHAR" property="researchFindings" />
   </resultMap>
 </mapper>

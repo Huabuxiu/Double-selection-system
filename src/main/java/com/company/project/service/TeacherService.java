@@ -4,7 +4,7 @@ import com.company.project.core.Service;
 
 
 /**
- * Created by Huabuxiu on 2020/03/20.
+ * Created by Huabuxiu on 2020/03/28.
  */
 public interface TeacherService extends Service<Teacher> {
 
