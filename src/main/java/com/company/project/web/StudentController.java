@@ -1,14 +1,8 @@
 package com.company.project.web;
 import com.company.project.core.Result;
 import com.company.project.core.ResultGenerator;
-import com.company.project.model.HostHolder;
-import com.company.project.model.Project;
-import com.company.project.model.Student;
-import com.company.project.model.User;
-import com.company.project.service.EducationService;
-import com.company.project.service.ProjectService;
-import com.company.project.service.StudentService;
-import com.company.project.service.UserService;
+import com.company.project.model.*;
+import com.company.project.service.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +29,15 @@ public class StudentController {
     private ProjectService projectService;
 
     @Resource
-    private UserService userService;
+    private ResultsService resultsService;
+
 
     @Autowired
     HostHolder hostHolder;
+
+    /*
+    学生基本信息
+     */
 
     @PostMapping("/basic_add")
     public Result add(@RequestBody Map<String,String> data) {
@@ -86,17 +85,136 @@ public class StudentController {
         return ResultGenerator.genSuccessResult("更新成功");
     }
 
-    @PostMapping("/delete")
-    public Result delete(@RequestParam Integer id) {
-        studentService.deleteById(id);
-        return ResultGenerator.genSuccessResult();
+
+    /*
+    学生教育信息
+     */
+
+    @PostMapping("/education")
+    public Result education(@RequestBody Map<String,Integer> data) {
+        Student student = studentService.findBy("uid",data.get("uid"));
+        if (student==null){
+            return ResultGenerator.genFailResult("学生信息不存在");
+        }
+        Education education = educationService.findBy("sid",student.getSid());
+        if (education == null){
+            return ResultGenerator.genFailResult("教育信息不存在");
+        }
+        Map<String,Object> modleMap = new HashMap<>();
+        modleMap.put("time_start",education.getTimeStart());
+        modleMap.put("time_end",education.getTimeEnd());
+        modleMap.put("school",education.getSchool());
+        modleMap.put("major",education.getMajor());
+        modleMap.put("sedu_dec",education.getSeduDec());
+        return ResultGenerator.genSuccessResult(modleMap);
     }
 
 
+    @PostMapping("/education_add")
+    public Result educationAdd(@RequestBody Map<String,Object> data) {
+        User user = hostHolder.getUser();
+        Student student = studentService.findBy("uid",user.getUid());
+        if (student==null){
+            return ResultGenerator.genFailResult("学生信息不存在");
+        }
+        Education education = new Education();
+        education.setSid(student.getSid());
+        education.setSchool((String) data.get("school"));
+        education.setMajor((String)data.get("major"));
+        education.setSeduDec((String)data.get("sedu_dec"));
+        education.setTimeStart(new Date((Long) data.get("time_start")));
+        education.setTimeEnd(new Date((Long)data.get("time_end")));
+        educationService.save(education);
+        return ResultGenerator.genSuccessResult("新增成功");
+    }
+
+
+    @PostMapping("/education_update")
+    public Result educationUpdate(@RequestBody Map<String,Object> data) {
+        User user = hostHolder.getUser();
+        Student student = studentService.findBy("uid",user.getUid());
+        if (student==null){
+            return ResultGenerator.genFailResult("学生信息不存在");
+        }
+        Education education = educationService.findBy("sid",student.getSid());
+        education.setSchool((String) data.get("school"));
+        education.setMajor((String)data.get("major"));
+        education.setSeduDec((String)data.get("sedu_dec"));
+        education.setTimeStart(new Date((Long) data.get("time_start")));
+        education.setTimeEnd(new Date((Long)data.get("time_end")));
+        educationService.update(education);
+        return ResultGenerator.genSuccessResult("更新成功");
+    }
+
+
+    /*
+    考研成绩
+     */
+
+    @PostMapping("/score")
+    public Result score(@RequestBody Map<String,Integer> data) {
+        Student student = studentService.findBy("uid",data.get("uid"));
+        if (student==null){
+            return ResultGenerator.genFailResult("学生信息不存在");
+        }
+       Results results = resultsService.findBy("sid",student.getSid());
+        if (results == null){
+            return ResultGenerator.genFailResult("教育信息不存在");
+        }
+        Map<String,Object> modleMap = new HashMap<>();
+        modleMap.put("math",results.getMath());
+        modleMap.put("english",results.getEnglish());
+        modleMap.put("politics",results.getPolitics());
+        modleMap.put("major",results.getMajor());
+        modleMap.put("total_score",results.getTotalScore());
+        modleMap.put("exam_type",results.getExamType());
+        return ResultGenerator.genSuccessResult(modleMap);
+    }
+
+
+    @PostMapping("/score_add")
+    public Result scoreAdd(@RequestBody Map<String,Object> data) {
+        User user = hostHolder.getUser();
+        Student student = studentService.findBy("uid",user.getUid());
+        if (student==null){
+            return ResultGenerator.genFailResult("学生信息不存在");
+        }
+        Results results = new Results();
+        results.setSid(student.getSid());
+        results.setMath((Integer) data.get("math"));
+        results.setEnglish((Integer) data.get("english"));
+        results.setPolitics((Integer) data.get("politics"));
+        results.setMajor((Integer) data.get("major"));
+        results.setTotalScore((Integer) data.get("total_score"));
+        results.setExamType((String) data.get("exam_type"));
+        resultsService.save(results);
+        return ResultGenerator.genSuccessResult("新增成功");
+    }
+
+    @PostMapping("/score_update")
+    public Result scoreUpdate(@RequestBody Map<String,Object> data) {
+        User user = hostHolder.getUser();
+        Student student = studentService.findBy("uid",user.getUid());
+        if (student==null){
+            return ResultGenerator.genFailResult("学生信息不存在");
+        }
+        Results results = resultsService.findBy("sid",student.getSid());
+        results.setMath((Integer)data.get("math"));
+        results.setEnglish((Integer) data.get("english"));
+        results.setPolitics((Integer) data.get("politics"));
+        results.setMajor((Integer) data.get("major"));
+        results.setTotalScore((Integer) data.get("total_score"));
+        results.setExamType((String) data.get("exam_type"));
+        resultsService.update(results);
+        return ResultGenerator.genSuccessResult("更新成功");
+    }
+
+
+    /*
+    项目经历
+     */
     @PostMapping("/project")
     public Result project(@RequestBody Map<String,Integer> data) {
-        Student student = studentService.findBy("uid",data.get("uid"));
-        //使用条件查询
         Example condition = new Condition(Project.class);
         //使用相等字段
         condition.createCriteria().andEqualTo("uid",data.get("uid"));
@@ -115,5 +233,34 @@ public class StudentController {
         return ResultGenerator.genSuccessResult(returnList);
     }
 
+    @PostMapping("/project_add")
+    public Result projectAdd(@RequestBody Map<String,Object> data){
+        Project project = new Project();
+        User user = hostHolder.getUser();
+        project.setUid(user.getUid());
+        project.setName((String) data.get("name"));
+        project.setTimeStart(new Date((Long) data.get("time_start")));
+        project.setTimeEnd(new Date((Long) data.get("time_end")));
+        project.setPosition((String) data.get("position"));
+        project.setDescribes((String) data.get("describes"));
+        projectService.save(project);
+        return ResultGenerator.genSuccessResult("新增成功");
+    }
+
+    @PostMapping("/project_update")
+    public Result projectUpdate(@RequestBody Map<String,Object> data) {
+
+        Project project = projectService.findById((Integer) data.get("pid"));
+        if (project==null){
+            return ResultGenerator.genFailResult("项目信息不存在");
+        }
+        project.setName((String) data.get("name"));
+        project.setTimeStart(new Date((Long) data.get("time_start")));
+        project.setTimeEnd(new Date((Long) data.get("time_end")));
+        project.setPosition((String) data.get("position"));
+        project.setDescribes((String) data.get("describes"));
+        projectService.update(project);
+        return ResultGenerator.genSuccessResult("更新成功");
+    }
 
 }

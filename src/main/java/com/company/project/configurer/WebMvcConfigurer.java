@@ -136,12 +136,16 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                 @Override
                 public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-                    String token = null;
+                    String token = request.getHeader("X-Token");
                     //利用session验证,获取token
                     if (request.getCookies() != null) {
                         for (Cookie cookie : request.getCookies()) {
-                            logger.info("cookie"+cookie.getName());
-                            if (cookie.getName().equals("token")) {
+                            logger.info("cookie："+cookie.getName());
+                            if (cookie.getName().equals("Admin-Token")){
+                                token = cookie.getValue();
+                                break;
+                            }
+                            if (cookie.getName().equals("token")){
                                 token = cookie.getValue();
                                 break;
                             }
@@ -157,6 +161,7 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                         hostHolder.setUser(user);
                         return true;
                     } else {
+                        responseResult(response,ResultGenerator.genFailResult("未登录"));
                         return false;
                     }
                 }
@@ -176,6 +181,9 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
             }).addPathPatterns("/**");
         }
     }
+
+
+
 
     private void responseResult(HttpServletResponse response, Result result) {
         response.setCharacterEncoding("UTF-8");

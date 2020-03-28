@@ -2,6 +2,7 @@ package com.company.project.web;
 import com.company.project.configurer.Log;
 import com.company.project.core.Result;
 import com.company.project.core.ResultGenerator;
+import com.company.project.model.HostHolder;
 import com.company.project.model.Student;
 import com.company.project.model.Teacher;
 import com.company.project.model.User;
@@ -13,6 +14,7 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -36,6 +38,8 @@ public class UserController {
     @Resource
     private TeacherService teacherService;
 
+    @Autowired
+    HostHolder hostHolder;
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
@@ -54,6 +58,15 @@ public class UserController {
         return ResultGenerator.genSuccessResult(returnMap);
     }
 
+    @PostMapping("/logout")
+    public Result logout() {
+        User user = hostHolder.getUser();
+        if (user == null){
+            return ResultGenerator.genFailResult("用户名不存在");
+        }
+        return ResultGenerator.genSuccessResult().setMessage("logout");
+    }
+
 
 
     @PostMapping("/user_info")
@@ -69,14 +82,18 @@ public class UserController {
         switch (user.getUserRole()){
             case 1: {
                 Student student = studentService.findBy("uid", user.getUid());
-                returnMap.put("image",student.getImage());
-                returnMap.put("name",student.getName());
+                if (student!=null){
+                    returnMap.put("image",student.getImage());
+                    returnMap.put("name",student.getName());
+                }
                 return ResultGenerator.genSuccessResult(returnMap);
             }
             case 2:{
                 Teacher teacher = teacherService.findBy("uid",user.getUid());
-                returnMap.put("image",teacher.getImage());
-                returnMap.put("name",teacher.getName());
+                if (teacher!=null){
+                    returnMap.put("image",teacher.getImage());
+                    returnMap.put("name",teacher.getName());
+                }
                 return ResultGenerator.genSuccessResult(returnMap);
             }
             default:

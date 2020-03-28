@@ -20,9 +20,12 @@ public class FileUtils {
      * @param fileName 源文件名
      * @return
      */
-
+    @Log
     public static boolean upload(MultipartFile file, String fileName){
 
+
+        // 生成新的文件名
+        //String realPath = path + "/" + FileNameUtils.getFileName(fileName);
 
         //使用原文件名
         String realPath = PROJECT_PATH + RESOURCES_PATH + "/" + fileName;

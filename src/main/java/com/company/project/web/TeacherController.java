@@ -5,13 +5,11 @@ import com.company.project.model.Teacher;
 import com.company.project.service.TeacherService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
 * Created by Huabuxiu on 2020/03/20.
@@ -22,8 +20,14 @@ public class TeacherController {
     @Resource
     private TeacherService teacherService;
 
-    @PostMapping("/add")
-    public Result add(Teacher teacher) {
+    @PostMapping("/basic_add")
+    public Result add(@RequestBody Map<String,String> data) {
+        Teacher teacher= new Teacher();
+        teacher.setName(data.get("name"));
+        teacher.setTitle(data.get("title"));
+        teacher.setResearchDirection(data.get("research_direction"));
+        teacher.setImage(data.get("image"));
+        teacher.setResearchFindings(data.get("research_findings"));
         teacherService.save(teacher);
         return ResultGenerator.genSuccessResult();
     }
@@ -46,11 +50,9 @@ public class TeacherController {
         return ResultGenerator.genSuccessResult(teacher);
     }
 
-    @PostMapping("/list")
-    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
-        PageHelper.startPage(page, size);
+    @RequestMapping("/list")
+    public Result list() {
         List<Teacher> list = teacherService.findAll();
-        PageInfo pageInfo = new PageInfo(list);
-        return ResultGenerator.genSuccessResult(pageInfo);
+        return ResultGenerator.genSuccessResult(list).setMessage("teacher list");
     }
 }
