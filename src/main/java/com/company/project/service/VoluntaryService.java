@@ -2,6 +2,7 @@ package com.company.project.service;
 import com.company.project.model.Voluntary;
 import com.company.project.core.Service;
 import com.company.project.model.VoluntaryVo;
+import tk.mybatis.mapper.entity.Condition;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ import java.util.List;
 public interface VoluntaryService extends Service<Voluntary> {
 
     List<VoluntaryVo> getVoList(List<Voluntary> list);
+
+    List<Voluntary> findUnhandle( int tid);
 }

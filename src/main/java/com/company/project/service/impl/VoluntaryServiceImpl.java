@@ -1,15 +1,19 @@
 package com.company.project.service.impl;
 
+import com.company.project.configurer.Log;
+import com.company.project.configurer.WebMvcConfigurer;
 import com.company.project.dao.VoluntaryMapper;
 import com.company.project.model.*;
-import com.company.project.service.EducationService;
-import com.company.project.service.ResultsService;
-import com.company.project.service.StudentService;
-import com.company.project.service.VoluntaryService;
+import com.company.project.service.*;
 import com.company.project.core.AbstractService;
+import com.company.project.util.LogAsPect;
 import com.company.project.util.ProgessState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Condition;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -22,6 +26,8 @@ import java.util.List;
 @Service
 @Transactional
 public class VoluntaryServiceImpl extends AbstractService<Voluntary> implements VoluntaryService {
+
+
     @Resource
     private VoluntaryMapper voluntaryMapper;
 
@@ -36,6 +42,8 @@ public class VoluntaryServiceImpl extends AbstractService<Voluntary> implements 
 
     @Resource
     EducationService educationService;
+
+
 
 
     public List<VoluntaryVo> getVoList(List<Voluntary> list){
@@ -60,6 +68,11 @@ public class VoluntaryServiceImpl extends AbstractService<Voluntary> implements 
             voList.add(voluntaryVo);
         }
         return voList;
+    }
+
+    @Override
+    public List<Voluntary> findUnhandle(int tid) {
+        return voluntaryMapper.findUnhandle(tid);
     }
 
 }

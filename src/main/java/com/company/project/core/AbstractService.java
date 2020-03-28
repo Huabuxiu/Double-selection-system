@@ -49,7 +49,7 @@ public abstract class AbstractService<T> implements Service<T> {
         return mapper.selectByPrimaryKey(id);
     }
 
-    @Log("logTest")
+
     @Override
     public T findBy(String fieldName, Object value) throws TooManyResultsException {
         try {

@@ -13,4 +13,10 @@
     <result column="progress" jdbcType="INTEGER" property="progress" />
     <result column="date" jdbcType="TIMESTAMP" property="date" />
   </resultMap>
+
+  <select id="findUnhandle" resultMap="BaseResultMap">
+    select distinct voluntary.sid, voluntary.vid, voluntary.rid, voluntary.tid, voluntary.level, voluntary.progress, voluntary.date
+        from voluntary,voluntary_state
+        where tid = #{tid} and progress = 1 and alive = 'on';
+  </select>
 </mapper>

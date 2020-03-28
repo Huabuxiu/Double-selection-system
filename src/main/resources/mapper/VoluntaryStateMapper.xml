@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.project.dao.VoluntaryStateMapper">
+  <resultMap id="BaseResultMap" type="com.company.project.model.VoluntaryState">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="vid" jdbcType="INTEGER" property="vid" />
+    <result column="alive" jdbcType="VARCHAR" property="alive" />
+  </resultMap>
+</mapper>
