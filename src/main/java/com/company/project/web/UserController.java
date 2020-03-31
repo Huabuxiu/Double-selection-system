@@ -85,6 +85,7 @@ public class UserController {
                 if (student!=null){
                     returnMap.put("image",student.getImage());
                     returnMap.put("name",student.getName());
+                    returnMap.put("sid",student.getSid());
                 }
                 return ResultGenerator.genSuccessResult(returnMap);
             }
@@ -93,6 +94,7 @@ public class UserController {
                 if (teacher!=null){
                     returnMap.put("image",teacher.getImage());
                     returnMap.put("name",teacher.getName());
+                    returnMap.put("tid",teacher.getTid());
                 }
                 return ResultGenerator.genSuccessResult(returnMap);
             }

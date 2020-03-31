@@ -2,8 +2,9 @@ package com.company.project.web;
 import com.company.project.core.Result;
 import com.company.project.core.ResultGenerator;
 import com.company.project.model.*;
-import com.company.project.service.ProjectService;
-import com.company.project.service.TeacherService;
+import com.company.project.service.*;
+import com.company.project.service.impl.VoluntaryServiceImpl;
+import com.company.project.util.ProgessState;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,12 @@ public class TeacherController {
 
     @Resource
     private ProjectService projectService;
+
+    @Resource
+    private StudentNumService studentNumService;
+
+    @Resource
+    private VoluntaryService voluntaryService;
 
     /*
     老师基本信息
@@ -142,6 +149,16 @@ public class TeacherController {
     @PostMapping("/list")
     public Result list() {
         List<Teacher> list = teacherService.findAll();
-        return ResultGenerator.genSuccessResult(list);
+        List<TeacherVo> voList = new ArrayList<>();
+        for (Teacher ele:
+             list) {
+            Example condition = new Condition(Voluntary.class);
+            condition.createCriteria().andEqualTo("tid",ele.getTid());
+            condition.and().andEqualTo("progress", ProgessState.getProgessCode("导师通过"));
+            int rated = studentNumService.findById(ele.getTid()).getNum();
+            int confirm = voluntaryService.findByCondition((Condition) condition).size();
+            voList.add(new TeacherVo(ele,rated,confirm));
+        }
+        return ResultGenerator.genSuccessResult(voList);
     }
 }

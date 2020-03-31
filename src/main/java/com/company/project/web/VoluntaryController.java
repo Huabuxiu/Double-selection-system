@@ -51,7 +51,7 @@ public class VoluntaryController {
     /*
     学生接口
      */
-
+//添加志愿
     @PostMapping("/add")
     public Result add(@RequestBody Map<String,Integer> data) {
         User user = hostHolder.getUser();
@@ -64,27 +64,6 @@ public class VoluntaryController {
         List<Voluntary> voluntaryList = null;
         Example condition = new Condition(Voluntary.class);
 
-        //        志愿满足3个且都失败，删除旧失败的志愿
-        condition.createCriteria().andEqualTo("sid",student.getSid());
-        voluntaryList = voluntaryService.findByCondition((Condition) condition);
-        if (voluntaryList.size()==3){
-            int flag = 0;
-            for (Voluntary elem:
-                 voluntaryList) {
-                if (ProgessState.getState(elem.getProgress()).equals("导师拒绝")
-                        || ProgessState.getState(elem.getProgress()).equals("满员失败")
-                        || ProgessState.getState(elem.getProgress()).equals("双选失败")){
-                    flag++;
-                }
-            }
-            if (flag == 3){//删除现在的志愿
-                for (Voluntary elem:
-                        voluntaryList) {
-                    voluntaryStateService.deleteById(elem.getVid());
-                    voluntaryService.deleteById(elem.getVid());
-                }
-            }
-        }
 //        判断志愿重叠
         condition.clear();
         condition.createCriteria().andEqualTo("level",data.get("level"));
@@ -119,10 +98,40 @@ public class VoluntaryController {
             voluntary.setProgress(ProgessState.getProgessCode("提交志愿"));
         }
         VoluntaryState voluntaryState = new VoluntaryState();
+        //判断志愿开启状态
         if (voluntary.getLevel()==1){
             voluntaryState.setAlive("on");
+        }else if (voluntary.getLevel()==2){
+            condition.clear();
+            condition.createCriteria().andEqualTo("sid",voluntary.getSid());
+            condition.and().andEqualTo("level",voluntary.getLevel()-1);
+            List<Voluntary> vol = voluntaryService.findByCondition((Condition)condition);
+            if (vol.size()==0){
+                voluntaryState.setAlive("off");
+            }else if(vol.size()==1){
+                if (voluntaryStateService.findById(vol.get(0).getVid()).getAlive().equals("on")){
+                    voluntaryState.setAlive("off");
+                }
+            }else {
+                voluntaryState.setAlive("on");
+            }
         }else {
-            voluntaryState.setAlive("off");
+            condition.clear();
+            condition.createCriteria().andEqualTo("sid",voluntary.getSid());
+            List<Voluntary> vol = voluntaryService.findByCondition((Condition)condition);
+            if (vol.size() == 0 ){ //前两个志愿都不存在
+                voluntaryState.setAlive("off");
+            }else if (vol.size() == 1 ){ //前两个志愿有一个存在
+                voluntaryState.setAlive("off");
+            } else if (vol.size() == 2){//前个都存在而且有一个是打开状态
+                if (voluntaryStateService.findById(vol.get(0).getVid()).getAlive().equals("on")
+                         ||
+                       voluntaryStateService.findById(vol.get(1).getVid()).getAlive().equals("on")) {
+                    voluntaryState.setAlive("off");
+                }
+           }else {  //前两个都存在而且都关闭
+               voluntaryState.setAlive("on");
+           }
         }
         voluntaryService.save(voluntary);
         condition.clear();
@@ -130,19 +139,34 @@ public class VoluntaryController {
         condition.and().andEqualTo("sid",voluntary.getSid());
         Voluntary voluntary1 =  voluntaryService.findByCondition((Condition) condition).get(0);
         voluntaryState.setVid(voluntary1.getVid());
-        if (ProgessState.getState(voluntary1.getProgress()).equals("满员失败")) {
+        if (ProgessState.getState(voluntary1.getProgress(),voluntaryState.getAlive()).equals("满员失败")) {
+           //失败处理
             voluntaryState.setAlive("off");
+            condition.clear();
+            condition.createCriteria().andEqualTo("sid",voluntary.getSid());
+            condition.and().andEqualTo("level",voluntary.getLevel()+1);
+            Voluntary voluntarynextLevel = voluntaryService.findByCondition((Condition) condition).get(0);
+            if (voluntarynextLevel !=null){
+                VoluntaryState voluntaryStatenext = new VoluntaryState();
+                voluntaryStatenext.setVid(voluntarynextLevel.getVid());
+                voluntaryStatenext.setAlive("on");
+                voluntaryStateService.update(voluntaryStatenext);
+            }
         }
         voluntaryStateService.save(voluntaryState);
         return ResultGenerator.genSuccessResult();
     }
 
-    @PostMapping("/studen_list")
-    public Result list(@RequestBody Map<String,Integer> data) {
 
+
+//    学生查看自己的志愿列表
+
+    @PostMapping("/student_list")
+    public Result list(@RequestBody Map<String,Integer> data) {
         Example condition = new Condition(Voluntary.class);
         //使用相等字段
         condition.createCriteria().andEqualTo("sid",studentService.findBy("uid",data.get("uid")).getSid());
+        condition.orderBy("level").asc();
         List<Voluntary> list  = voluntaryService.findByCondition((Condition) condition);
         return ResultGenerator.genSuccessResult(voluntaryService.getVoList(list));
     }
@@ -177,6 +201,106 @@ public class VoluntaryController {
         return ResultGenerator.genSuccessResult(voluntaryService.getVoList(list));
     }
 
+
+//导师通过学生
+    @PostMapping("/teacher_pass")
+    public Result teacherPass(@RequestBody Map<String,Integer> data ) {
+        User user = hostHolder.getUser();
+        Teacher teacher = teacherService.findBy("uid",user.getUid());
+        Example condition = new Condition(Voluntary.class);
+        //使用相等字段
+        condition.createCriteria().andEqualTo("tid",teacher.getTid());
+        condition.and().andEqualTo("sid",data.get("sid"));
+        List<Voluntary> list  = voluntaryService.findByCondition((Condition) condition);
+        Voluntary voluntary = list.get(0);
+        voluntary.setProgress(ProgessState.getProgessCode("导师通过"));
+        voluntaryService.update(voluntary);
+        return ResultGenerator.genSuccessResult();
+    }
+
+//导师拒绝学生
+    @PostMapping("/teacher_refuse")
+    public Result teacher_refuse(@RequestBody Map<String,Integer> data ) {
+        User user = hostHolder.getUser();
+        Teacher teacher = teacherService.findBy("uid",user.getUid());
+        Example condition = new Condition(Voluntary.class);
+        //使用相等字段
+        condition.createCriteria().andEqualTo("tid",teacher.getTid());
+        condition.and().andEqualTo("sid",data.get("sid"));
+        List<Voluntary> list  = voluntaryService.findByCondition((Condition) condition);
+        Voluntary voluntary = list.get(0);
+        voluntary.setProgress(ProgessState.getProgessCode("导师拒绝"));
+        voluntaryService.update(voluntary);
+        //失败处理
+        VoluntaryState voluntaryState = voluntaryStateService.findById(voluntary.getVid());
+        voluntaryState.setAlive("off");
+        voluntaryStateService.update(voluntaryState);   //更新当前志愿状态
+        //查看下一志愿并开启下一志愿
+        condition.clear();
+        condition.createCriteria().andEqualTo("sid",voluntary.getSid());
+        condition.and().andEqualTo("level",voluntary.getLevel()+1);
+        List<Voluntary> list1 = voluntaryService.findByCondition((Condition) condition);
+        if (list1.size()!=0){
+            Voluntary voluntarynextLevel = list1.get(0);
+            VoluntaryState voluntaryStatenext = new VoluntaryState();
+            voluntaryStatenext.setVid(voluntarynextLevel.getVid());
+            voluntaryStatenext.setAlive("on");
+            voluntaryStateService.update(voluntaryStatenext);
+        }
+        return ResultGenerator.genSuccessResult();
+    }
+
+/*
+    管理员接口
+ */
+
+    //管理员通过学生
+    @PostMapping("/admin_pass")
+    public Result adminPass(@RequestBody Map<String,Integer> data ) {
+        User user = hostHolder.getUser();
+        Teacher teacher = teacherService.findBy("uid",user.getUid());
+        Example condition = new Condition(Voluntary.class);
+        //使用相等字段
+        condition.createCriteria().andEqualTo("tid",teacher.getTid());
+        condition.and().andEqualTo("sid",data.get("sid"));
+        List<Voluntary> list  = voluntaryService.findByCondition((Condition) condition);
+        Voluntary voluntary = list.get(0);
+        voluntary.setProgress(ProgessState.getProgessCode("双选成功"));
+        voluntaryService.update(voluntary);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    //导师拒绝学生
+    @PostMapping("/admin_refuse")
+    public Result admin_refuse(@RequestBody Map<String,Integer> data ) {
+        User user = hostHolder.getUser();
+        Teacher teacher = teacherService.findBy("uid",user.getUid());
+        Example condition = new Condition(Voluntary.class);
+        //使用相等字段
+        condition.createCriteria().andEqualTo("tid",teacher.getTid());
+        condition.and().andEqualTo("sid",data.get("sid"));
+        List<Voluntary> list  = voluntaryService.findByCondition((Condition) condition);
+        Voluntary voluntary = list.get(0);
+        voluntary.setProgress(ProgessState.getProgessCode("双选失败"));
+        voluntaryService.update(voluntary);
+        //失败处理
+        VoluntaryState voluntaryState = voluntaryStateService.findById(voluntary.getVid());
+        voluntaryState.setAlive("off");
+        voluntaryStateService.update(voluntaryState);   //更新当前志愿状态
+        //查看下一志愿并开启下一志愿
+        condition.clear();
+        condition.createCriteria().andEqualTo("sid",voluntary.getSid());
+        condition.and().andEqualTo("level",voluntary.getLevel()+1);
+        List<Voluntary> list1 = voluntaryService.findByCondition((Condition) condition);
+        if (list1.size()!=0){
+            Voluntary voluntarynextLevel = list1.get(0);
+            VoluntaryState voluntaryStatenext = new VoluntaryState();
+            voluntaryStatenext.setVid(voluntarynextLevel.getVid());
+            voluntaryStatenext.setAlive("on");
+            voluntaryStateService.update(voluntaryStatenext);
+        }
+        return ResultGenerator.genSuccessResult();
+    }
 
 
 

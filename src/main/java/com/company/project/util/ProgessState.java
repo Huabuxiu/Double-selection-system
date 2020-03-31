@@ -17,8 +17,12 @@ public class ProgessState {
         return 0;
     }
 
-    public static String  getState(int progessCode){
-       return statesArray[progessCode-1];
+    public static String  getState(int progessCode,String alive){
+        if (alive.equals("on")) {
+            return statesArray[progessCode-1];
+        }else {
+            return "未进入流程";
+        }
     }
 
 

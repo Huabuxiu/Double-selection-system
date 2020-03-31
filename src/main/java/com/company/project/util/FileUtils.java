@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.UUID;
 
 public class FileUtils {
@@ -54,6 +55,62 @@ public class FileUtils {
     }
 
 
+//    public static void main(String[] args) {
+//        Double S = new Double(150000);
+//        Double P = new Double(0.05);
+//        Double A = new Double(150000);
+//        int n = 10;
+//        System.out.println("不理财不涨工资的情况下有"+(S+(n-1)*A)+"元");
+//        System.out.println("理财不涨工资第"+n+"年后总共有"+getn(S,P,A,n).intValue()+"元");
+//        System.out.println("不理财涨工资第"+n+"年后总共有"+getnot(S,P,A,n).intValue()+"元");
+//        System.out.println("理财涨工资第"+n+"年后总共有"+getG(S,P,A,n).intValue()+"元");
+//        System.out.println("通货膨胀下不理财涨工资第"+n+"年后总共有"+getnot(S,P,A,n).intValue()+"元"+"价值现在"+getnotInf(S,P,A,n).intValue()+"元");
+//        System.out.println("通货膨胀下理财涨工资第"+n+"年后总共有"+getG(S,P,A,n).intValue()+"元"+"价值现在"+getGInf(S,P,A,n).intValue()+"元");
+//    }
+//
+//    private static Double getn(Double S, Double P, Double A, int n){
+//        double tem = S * Math.pow(1+P,n);
+//        for (int i =1 ; i < n; i ++){
+//            tem += A * Math.pow(1+P,n-i);
+//        }
+//        return tem;
+//    }
+//
+//    private static Double getG(Double S, Double P, Double A, int n){
+//        double tem = S * Math.pow(1+P,n);
+//        for (int i =1 ; i < n; i ++){
+//            A = A *( 1 + 0.04);
+//            tem += A * Math.pow(1+P,n-i);
+//        }
+//        return tem;
+//    }
+//
+//    private static Double getnot(Double S, Double P, Double A, int n){
+//        double tem = S ;
+//        for (int i =1 ; i < n; i ++){
+//            A = A *( 1 + 0.05);
+//            tem += A ;
+//        }
+//        return tem;
+//    }
+//
+//    private static Double getGInf(Double S, Double P, Double A, int n){
+//        double tem = S * Math.pow(1+P,n);
+//        for (int i =1 ; i < n; i ++){
+//            A = A *( 1 + 0.04);
+//            tem += A * Math.pow(1+P,n-i);
+//        }
+//        return tem * Math.pow((1-0.025),10);
+//    }
+//
+//    private static Double getnotInf(Double S, Double P, Double A, int n){
+//        double tem = S ;
+//        for (int i =1 ; i < n; i ++){
+//            A = A *( 1 + 0.05);
+//            tem += A ;
+//        }
+//        return tem * Math.pow((1-0.025),10);
+//    }
 
     /**
      * 获取文件后缀

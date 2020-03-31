@@ -43,6 +43,8 @@ public class VoluntaryServiceImpl extends AbstractService<Voluntary> implements 
     @Resource
     EducationService educationService;
 
+    @Resource
+    VoluntaryStateService voluntaryStateService;
 
 
 
@@ -61,7 +63,7 @@ public class VoluntaryServiceImpl extends AbstractService<Voluntary> implements 
             voluntaryVo.setLevel(voluntary.getLevel());
             voluntaryVo.setTotal_score(results.getTotalScore());
             voluntaryVo.setExam_type(results.getExamType());
-            voluntaryVo.setState(ProgessState.getState(voluntary.getProgress()));
+            voluntaryVo.setState(ProgessState.getState(voluntary.getProgress(),voluntaryStateService.findById(voluntary.getVid()).getAlive()));
             voluntaryVo.setVoluntary_time(voluntary.getDate());
             voluntaryVo.setSchool(education.getSchool());
             voluntaryVo.setMajor(education.getMajor());
