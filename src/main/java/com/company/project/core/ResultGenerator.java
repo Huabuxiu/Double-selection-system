@@ -21,7 +21,7 @@ public class ResultGenerator {
 
     public static Result genFailResult(String message) {
         return new Result()
-                .setCode(ResultCode.SUCCESS)
+                .setCode(ResultCode.FAIL)
                 .setMessage(message);
     }
 }
