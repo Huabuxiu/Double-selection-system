@@ -219,6 +219,9 @@ public class StudentController {
         //使用相等字段
         condition.createCriteria().andEqualTo("uid",data.get("uid"));
         List<Project> projectList = projectService.findByCondition((Condition) condition);
+        if (projectList.size()==0){
+            return ResultGenerator.genFailResult("项目信息未添加");
+        }
         List<Map> returnList = new ArrayList<>();
         for (Project project:
              projectList) {

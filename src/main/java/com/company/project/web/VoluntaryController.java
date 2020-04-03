@@ -59,7 +59,9 @@ public class VoluntaryController {
             return  ResultGenerator.genFailResult("用户不存在");
         }
         Student student =studentService.findBy("uid",user.getUid());
-
+        if (student==null){
+            return ResultGenerator.genFailResult("学生信息未添加，请先添加学生信息");
+        }
         Voluntary voluntary = null;
         List<Voluntary> voluntaryList = null;
         Example condition = new Condition(Voluntary.class);
@@ -160,7 +162,6 @@ public class VoluntaryController {
 
 
 //    学生查看自己的志愿列表
-
     @PostMapping("/student_list")
     public Result list(@RequestBody Map<String,Integer> data) {
         Example condition = new Condition(Voluntary.class);

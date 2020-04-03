@@ -2,13 +2,8 @@ package com.company.project.web;
 import com.company.project.configurer.Log;
 import com.company.project.core.Result;
 import com.company.project.core.ResultGenerator;
-import com.company.project.model.HostHolder;
-import com.company.project.model.Student;
-import com.company.project.model.Teacher;
-import com.company.project.model.User;
-import com.company.project.service.StudentService;
-import com.company.project.service.TeacherService;
-import com.company.project.service.UserService;
+import com.company.project.model.*;
+import com.company.project.service.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -16,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -37,6 +33,25 @@ public class UserController {
 
     @Resource
     private TeacherService teacherService;
+
+    @Resource
+    private ProjectService projectService;
+
+    @Resource
+    private StudentNumService studentNumService;
+
+    @Resource
+    private VoluntaryStateService voluntaryStateService;
+
+    @Resource
+    private VoluntaryService voluntaryService;
+
+    @Resource
+    private EducationService educationService;
+
+    @Resource
+    private ResultsService resultsService;
+
 
     @Autowired
     HostHolder hostHolder;
@@ -122,7 +137,47 @@ public class UserController {
 
     @PostMapping("/delete")
     public Result delete(@RequestBody Map<String,Integer> data) {
-        userService.deleteById(data.get("id"));
+        User user = userService.findById(data.get("uid"));
+        Condition condition = new Condition(Project.class);
+        condition.createCriteria().andEqualTo("uid",user.getUid());
+        List<Project> projectList = projectService.findByCondition(condition);
+        if (projectList.size()!=0){
+            for (Project p :
+                    projectList) {
+                projectService.deleteById(p.getPid());
+            }
+        }
+        if(user.getUserRole()==2){
+            Teacher teacher =  teacherService.findBy("uid",user.getUid());
+            studentNumService.deleteById(teacher.getTid());
+            condition = new Condition(Voluntary.class);
+            condition.createCriteria().andEqualTo("tid",teacher.getTid());
+            List<Voluntary> voluntaryList = voluntaryService.findByCondition(condition);
+            if (voluntaryList.size()!=0){
+                for (Voluntary vo :
+                        voluntaryList) {
+                    voluntaryStateService.deleteById(vo.getVid());
+                    voluntaryService.deleteById(vo.getVid());
+                }
+            }
+            teacherService.deleteById(teacher.getTid());
+        }else if (user.getUserRole()==1){
+            Student student = studentService.findBy("uid",user.getUid());
+            condition = new Condition(Voluntary.class);
+            condition.createCriteria().andEqualTo("sid",student.getSid());
+            List<Voluntary> voluntaryList = voluntaryService.findByCondition(condition);
+            if (voluntaryList.size()!=0){
+                for (Voluntary vo :
+                        voluntaryList) {
+                    voluntaryStateService.deleteById(vo.getVid());
+                    voluntaryService.deleteById(vo.getVid());
+                }
+            }
+            resultsService.deleteById(resultsService.findBy("sid",student.getSid()).getRid());
+            educationService.deleteById(educationService.findBy("sid",student.getSid()).getEid());
+            studentService.deleteById(student.getSid());
+        }
+        userService.deleteById(data.get("uid"));
         return ResultGenerator.genSuccessResult("删除成功");
     }
 
@@ -142,7 +197,9 @@ public class UserController {
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
         List<User> list = userService.findAll();
-        PageInfo pageInfo = new PageInfo(list);
-        return ResultGenerator.genSuccessResult(pageInfo);
+        for (User user:list){
+            user.setPassword(" ");
+        }
+        return ResultGenerator.genSuccessResult(list);
     }
 }

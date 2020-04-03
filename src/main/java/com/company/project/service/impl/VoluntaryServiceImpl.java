@@ -67,6 +67,8 @@ public class VoluntaryServiceImpl extends AbstractService<Voluntary> implements 
             voluntaryVo.setVoluntary_time(voluntary.getDate());
             voluntaryVo.setSchool(education.getSchool());
             voluntaryVo.setMajor(education.getMajor());
+            voluntaryVo.setStudent_uid(student.getUid());
+            voluntaryVo.setTeacher_uid(teacher.getUid());
             voList.add(voluntaryVo);
         }
         return voList;

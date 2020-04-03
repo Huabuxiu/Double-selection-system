@@ -13,6 +13,24 @@ public class VoluntaryVo {
     private   String State;
     private   String school;
     private   String major;
+    private   int student_uid;
+    private   int teacher_uid;
+
+    public int getStudent_uid() {
+        return student_uid;
+    }
+
+    public void setStudent_uid(int student_uid) {
+        this.student_uid = student_uid;
+    }
+
+    public int getTeacher_uid() {
+        return teacher_uid;
+    }
+
+    public void setTeacher_uid(int teacher_uid) {
+        this.teacher_uid = teacher_uid;
+    }
 
     public String getMajor() {
         return major;
