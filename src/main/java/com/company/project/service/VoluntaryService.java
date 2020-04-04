@@ -1,7 +1,6 @@
 package com.company.project.service;
-import com.company.project.model.Voluntary;
+import com.company.project.model.*;
 import com.company.project.core.Service;
-import com.company.project.model.VoluntaryVo;
 import tk.mybatis.mapper.entity.Condition;
 
 import java.util.List;
@@ -15,4 +14,14 @@ public interface VoluntaryService extends Service<Voluntary> {
     List<VoluntaryVo> getVoList(List<Voluntary> list);
 
     List<Voluntary> findUnhandle( int tid);
+
+    List<VoluntaryVo> getEpmtyVoList(List<Student> list);
+
+    public List<Voluntary>  getByState(List<VoluntaryState> states);
+
+    List<Voluntary> getfailStudent();
+
+    public VoluntaryVo getVo(Voluntary voluntary,String states);
+
+    public List<StudentVoluntary> getStudentVoluntaryList();
 }

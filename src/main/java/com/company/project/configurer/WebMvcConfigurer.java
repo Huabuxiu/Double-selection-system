@@ -155,6 +155,7 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
                        logger.info("token:"+token);
                         User user = userService.findBy("token", token);
                         if (user == null) {
+                            responseResult(response,ResultGenerator.genFailResult("用户不存在"));
                             return false;
                         }
                         logger.info("user:"+user.getUsername());

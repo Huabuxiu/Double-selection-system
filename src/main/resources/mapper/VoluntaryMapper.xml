@@ -14,9 +14,35 @@
     <result column="date" jdbcType="TIMESTAMP" property="date" />
   </resultMap>
 
+  <resultMap id="StudenResultMap" type="com.company.project.model.StudentVoluntary">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="vid" jdbcType="INTEGER" property="vid" />
+    <result column="sid" jdbcType="INTEGER" property="sid" />
+    <result column="rid" jdbcType="INTEGER" property="rid" />
+    <result column="tid" jdbcType="INTEGER" property="tid" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="progress" jdbcType="INTEGER" property="progress" />
+    <result column="alive" jdbcType="VARCHAR" property="alive" />
+    <result column="date" jdbcType="TIMESTAMP" property="date" />
+  </resultMap>
+
+
   <select id="findUnhandle" resultMap="BaseResultMap">
     select distinct voluntary.sid, voluntary.vid, voluntary.rid, voluntary.tid, voluntary.level, voluntary.progress, voluntary.date
         from voluntary,voluntary_state
         where tid = #{tid} and progress = 1 and alive = 'on';
+  </select>
+
+  <select id="getfailStudent" resultMap="BaseResultMap">
+select *
+        from voluntary where progress in (3,4,6) and level = 3;
+  </select>
+
+
+  <select id="getStudentVoluntaryList" resultMap="StudenResultMap">
+    select distinct  voluntary_state.alive,voluntary.sid, voluntary.vid, voluntary.rid, voluntary.tid, voluntary.level, voluntary.progress, voluntary.date
+from voluntary,voluntary_state where voluntary.vid = voluntary_state.vid order by level asc ;
   </select>
 </mapper>

@@ -14,4 +14,9 @@
     <result column="image" jdbcType="VARCHAR" property="image" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+  <select id="dontHaveVoluntary" resultMap="BaseResultMap">
+    select sid, uid, name, phone, e_mail, qq, image, update_time
+from ds.student where sid not in (select distinct sid from voluntary);
+  </select>
 </mapper>

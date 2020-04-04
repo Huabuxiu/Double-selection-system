@@ -3,10 +3,7 @@ import com.company.project.core.Result;
 import com.company.project.core.ResultGenerator;
 import com.company.project.model.*;
 import com.company.project.service.*;
-import com.company.project.service.impl.VoluntaryServiceImpl;
 import com.company.project.util.ProgessState;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +12,7 @@ import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
 * Created by Huabuxiu on 2020/03/20.
@@ -255,14 +250,25 @@ public class VoluntaryController {
     管理员接口
  */
 
+    /*
+   管理员查看待选学生列表
+  */
+    @PostMapping("/admin_unhandle_list")
+    public Result adminlist() {
+
+        Condition condition = new Condition(Voluntary.class);
+        condition.createCriteria().andEqualTo("progress",2);
+        List<Voluntary> list = voluntaryService.findByCondition(condition);
+        return ResultGenerator.genSuccessResult(voluntaryService.getVoList(list));
+    }
+
+
     //管理员通过学生
     @PostMapping("/admin_pass")
     public Result adminPass(@RequestBody Map<String,Integer> data ) {
-        User user = hostHolder.getUser();
-        Teacher teacher = teacherService.findBy("uid",user.getUid());
         Example condition = new Condition(Voluntary.class);
         //使用相等字段
-        condition.createCriteria().andEqualTo("tid",teacher.getTid());
+        condition.createCriteria().andEqualTo("progress",2);
         condition.and().andEqualTo("sid",data.get("sid"));
         List<Voluntary> list  = voluntaryService.findByCondition((Condition) condition);
         Voluntary voluntary = list.get(0);
@@ -271,14 +277,12 @@ public class VoluntaryController {
         return ResultGenerator.genSuccessResult();
     }
 
-    //导师拒绝学生
+    //管理员拒绝学生
     @PostMapping("/admin_refuse")
     public Result admin_refuse(@RequestBody Map<String,Integer> data ) {
-        User user = hostHolder.getUser();
-        Teacher teacher = teacherService.findBy("uid",user.getUid());
         Example condition = new Condition(Voluntary.class);
         //使用相等字段
-        condition.createCriteria().andEqualTo("tid",teacher.getTid());
+        condition.createCriteria().andEqualTo("progress",2);
         condition.and().andEqualTo("sid",data.get("sid"));
         List<Voluntary> list  = voluntaryService.findByCondition((Condition) condition);
         Voluntary voluntary = list.get(0);
@@ -302,6 +306,116 @@ public class VoluntaryController {
         }
         return ResultGenerator.genSuccessResult();
     }
+
+
+//    查看所有学生
+    @PostMapping("/all_student_list")
+    public Result all_studen_list() {
+        List<VoluntaryVo> voList= new ArrayList<>();
+       Map<String,StudentListElement> returnmap  = new HashMap<>();
+        Set<Integer> sidSet  = new HashSet<>();
+        List<StudentVoluntary> studentListElements = voluntaryService.getStudentVoluntaryList();
+
+        for (StudentVoluntary ele :
+                studentListElements) {
+            if (!sidSet.contains(ele.getSid())) {
+                StudentListElement listElement = new StudentListElement();
+                listElement.setVoluntarie(ele);
+                sidSet.add(ele.getSid());
+                returnmap.put(String.valueOf(ele.getSid()),listElement);
+            }else {
+                returnmap.get(String.valueOf(ele.getSid())).setVoluntarie(ele);
+            }
+        }
+        returnmap.forEach((value,key)->{
+            voList.add(getElement(key.voluntaries));
+        });
+
+//        没有提交列表
+        List<Student> students = studentService.dontHaveVoluntary();
+        if (students.size() !=0){
+            voList.addAll(voluntaryService.getEpmtyVoList(students));
+        }
+        return ResultGenerator.genSuccessResult(voList);
+    }
+
+
+
+
+    public VoluntaryVo getElement(List<StudentVoluntary> voluntaries){
+        Voluntary voluntary = new Voluntary();
+
+//        正常状态
+        for (StudentVoluntary ele:voluntaries){
+            if (ele.getAlive().equals("on")){
+                voluntary.setProgress(ele.getProgress());
+                voluntary.setRid(ele.getRid());
+                voluntary.setSid(ele.getSid());
+                voluntary.setDate(ele.getDate());
+                voluntary.setLevel(ele.getLevel());
+                voluntary.setTid(ele.getTid());
+                voluntary.setVid(ele.getVid());
+                return voluntaryService.getVo( voluntary,"on");
+            }
+        }
+
+        if (voluntaries.size()==1 ){
+            if (voluntaries.get(0).getLevel()==1) {
+                StudentVoluntary ele = voluntaries.get(0);
+                voluntary.setProgress(ele.getProgress());
+                voluntary.setRid(ele.getRid());
+                voluntary.setSid(ele.getSid());
+                voluntary.setDate(ele.getDate());
+                voluntary.setLevel(ele.getLevel());
+                voluntary.setTid(ele.getTid());
+                voluntary.setVid(ele.getVid());
+                return voluntaryService.getVo(voluntary, "只有第一志愿且失败");
+            }else {
+                StudentVoluntary ele = voluntaries.get(0);
+                voluntary.setProgress(ele.getProgress());
+                voluntary.setRid(ele.getRid());
+                voluntary.setSid(ele.getSid());
+                voluntary.setDate(ele.getDate());
+                voluntary.setLevel(ele.getLevel());
+                voluntary.setTid(ele.getTid());
+                voluntary.setVid(ele.getVid());
+                return voluntaryService.getVo( voluntary,"没有第一志愿，未进入流程");
+            }
+        }
+        if (voluntaries.size()==2){
+            if (voluntaries.get(0).getLevel()!=1){
+                voluntary.setProgress(voluntaries.get(0).getProgress());
+                voluntary.setRid(voluntaries.get(0).getRid());
+                voluntary.setSid(voluntaries.get(0).getSid());
+                voluntary.setDate(voluntaries.get(0).getDate());
+                voluntary.setLevel(voluntaries.get(0).getLevel());
+                voluntary.setTid(voluntaries.get(0).getTid());
+                voluntary.setVid(voluntaries.get(0).getVid());
+                return voluntaryService.getVo( voluntary,"没有第一志愿，未进入流程");
+            }else if (voluntaries.get(1).getLevel()==3){
+                voluntary.setProgress(voluntaries.get(1).getProgress());
+                voluntary.setRid(voluntaries.get(1).getRid());
+                voluntary.setSid(voluntaries.get(1).getSid());
+                voluntary.setDate(voluntaries.get(1).getDate());
+                voluntary.setLevel(voluntaries.get(1).getLevel());
+                voluntary.setTid(voluntaries.get(1).getTid());
+                voluntary.setVid(voluntaries.get(1).getVid());
+                return voluntaryService.getVo( voluntary,"第二志愿缺失，暂时未进入流程");
+            }
+        }
+        if (voluntaries.size()==3){
+            voluntary.setProgress(voluntaries.get(2).getProgress());
+            voluntary.setRid(voluntaries.get(2).getRid());
+            voluntary.setSid(voluntaries.get(2).getSid());
+            voluntary.setDate(voluntaries.get(2).getDate());
+            voluntary.setLevel(voluntaries.get(2).getLevel());
+            voluntary.setTid(voluntaries.get(2).getTid());
+            voluntary.setVid(voluntaries.get(2).getVid());
+            return voluntaryService.getVo( voluntary,"三大志愿都失败");
+        }
+        return null;
+    }
+
 
 
 
