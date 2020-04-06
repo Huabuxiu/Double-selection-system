@@ -182,6 +182,7 @@ public class VoluntaryController {
         //使用相等字段
         condition.createCriteria().andEqualTo("tid",teacher.getTid());
         condition.and().andEqualTo("progress",ProgessState.getProgessCode("导师通过"));
+        condition.or().andEqualTo("progress",ProgessState.getProgessCode("双选成功"));
         List<Voluntary> list  = voluntaryService.findByCondition((Condition) condition);
         return ResultGenerator.genSuccessResult(voluntaryService.getVoList(list));
     }

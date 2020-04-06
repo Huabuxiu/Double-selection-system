@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.company.project.dao.ConversationMapper">
+  <resultMap id="BaseResultMap" type="com.company.project.model.Conversation">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="conid" jdbcType="VARCHAR" property="conid" />
+    <result column="fromid" jdbcType="INTEGER" property="fromid" />
+    <result column="toid" jdbcType="INTEGER" property="toid" />
+    <result column="message" jdbcType="VARCHAR" property="message" />
+    <result column="date" jdbcType="TIMESTAMP" property="date" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+  </resultMap>
+
+  <select id="getAllConversation" resultMap="BaseResultMap" parameterType="Integer">
+    select conid, fromid, toid, message, date, state
+from  conversation where `fromid`= #{uid} or `toid`=#{uid} group by conid;
+  </select>
+</mapper>

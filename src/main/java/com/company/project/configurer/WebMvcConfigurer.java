@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -44,6 +45,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 /**
  * Spring MVC 配置
@@ -60,6 +62,12 @@ public class WebMvcConfigurer extends WebMvcConfigurerAdapter {
 
     @Resource
     private UserService userService;
+
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+
+        return new ServerEndpointExporter();
+    }
 
     //使用阿里 FastJson 作为JSON MessageConverter
     @Override
